@@ -112,16 +112,17 @@ public class usercontroller {
         return ResponseEntity.ok("Logged in as: " + userEmail);
     }
 
-    @GetMapping("/my-items")
-    public ResponseEntity<?> getMyItems(HttpSession session) {
-        Object userIdObj = session.getAttribute("userId");
-        if (userIdObj == null) {
-            return ResponseEntity.status(401).body("Not logged in");
+    @GetMapping("/user-items")
+    public ResponseEntity<?> getItemsByUserEmail(@RequestParam String email) {
+        List<Item> items = itemRepo.findItemsByUserEmail(email);
+
+        if (items.isEmpty()) {
+            return ResponseEntity.status(404).body("No items found for user with email: " + email);
         }
 
-        Long userId = (Long) userIdObj;
-        List<Item> items = itemRepo.findAllByUserId(userId);
         return ResponseEntity.ok(items);
     }
+
+
 
 }

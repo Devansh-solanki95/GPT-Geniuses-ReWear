@@ -20,15 +20,14 @@ public class Item {
     private String category;
     private String size;
     private String type;
-    private String condition;
+    private String itemcondition;
     private String tags;
 
     @Lob
     @Column(name = "image_data", columnDefinition = "LONGBLOB")
     private byte[] imageData;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
-
 
 }

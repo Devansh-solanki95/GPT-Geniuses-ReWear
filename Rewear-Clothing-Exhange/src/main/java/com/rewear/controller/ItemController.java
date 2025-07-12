@@ -27,7 +27,7 @@
                 @RequestParam String category,
                 @RequestParam String size,
                 @RequestParam String type,
-                @RequestParam String condition,
+                @RequestParam String itemcondition,
                 @RequestParam String tags,
                 @RequestParam MultipartFile image,
                 HttpSession session
@@ -50,10 +50,12 @@
                 item.setCategory(category);
                 item.setSize(size);
                 item.setType(type);
-                item.setCondition(condition);
+                item.setItemcondition(itemcondition);
                 item.setTags(tags);
                 item.setImageData(image.getBytes());
                 item.setUser(userOpt.get()); // ✅ Set user
+
+
 
                 itemRepo.save(item);
                 return ResponseEntity.ok("Item uploaded successfully");
