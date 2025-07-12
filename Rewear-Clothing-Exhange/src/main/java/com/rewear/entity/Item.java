@@ -1,6 +1,5 @@
 package com.rewear.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,11 +22,13 @@ public class Item {
     private String type;
     private String condition;
     private String tags;
-    private String imageUrl; // Mock image URL for now
 
-    @ManyToOne
-    private User owner;
+    @Lob
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
+    private byte[] imageData;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // Getters and Setters
+
 }
-

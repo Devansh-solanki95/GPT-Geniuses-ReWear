@@ -1,3 +1,4 @@
+// User.java
 package com.rewear.entity;
 
 import jakarta.persistence.*;
@@ -5,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -28,7 +30,9 @@ public class User {
 
     private String profileImageUrl;
 
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @Enumerated(EnumType.STRING)
-//    private Set<Role> roles = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;  // Default to USER
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Item> items;
+
 }

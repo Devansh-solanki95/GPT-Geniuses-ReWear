@@ -1,6 +1,9 @@
 package com.rewear.controller;
 
+import com.rewear.entity.Item;
+import com.rewear.entity.Role;
 import com.rewear.entity.User;
+import com.rewear.repository.ItemRepo;
 import com.rewear.repository.UserRepo;
 import com.rewear.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,22 +20,29 @@ public class usercontroller {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private ItemRepo itemRepo;
+
+
+    // usercontroller.java (signup method)
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody User user, HttpSession session) {
         if (userRepo.existsByEmail(user.getEmail())) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
+        user.setRole(Role.USER); // Default role for all new signups
+
         String otp = UserService.generateotp();
         UserService.sendOTP(user.getEmail(), otp);
 
-        // Store OTP and user data temporarily in session
         session.setAttribute("otp", otp);
         session.setAttribute("otpEmail", user.getEmail());
         session.setAttribute("pendingUser", user);
 
         return ResponseEntity.ok("OTP sent to your email. Please verify to complete signup.");
     }
+
 
     @PostMapping("/verify-otp")
     public ResponseEntity<String> verifyOtp(@RequestParam String email,
@@ -100,4 +111,17 @@ public class usercontroller {
 
         return ResponseEntity.ok("Logged in as: " + userEmail);
     }
+
+    @GetMapping("/my-items")
+    public ResponseEntity<?> getMyItems(HttpSession session) {
+        Object userIdObj = session.getAttribute("userId");
+        if (userIdObj == null) {
+            return ResponseEntity.status(401).body("Not logged in");
+        }
+
+        Long userId = (Long) userIdObj;
+        List<Item> items = itemRepo.findAllByUserId(userId);
+        return ResponseEntity.ok(items);
+    }
+
 }
